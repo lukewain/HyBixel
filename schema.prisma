@@ -1,0 +1,45 @@
+// database
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// generator
+generator client {
+  provider             = "prisma-client-py"
+  recursive_type_depth = 5
+}
+
+// Enums
+enum ProfileType {
+    IRONMAN
+    BINGO
+    STANDARD
+}
+
+// data models
+// model Post {
+//   id        Int     @id @default(autoincrement())
+//   title     String
+//   content   String?
+//   views     Int     @default(0)
+//   published Boolean @default(false)
+//   author    User?   @relation(fields: [author_id], references: [id])
+//   author_id Int?
+// }
+
+model User {
+  id    String    @unique  // Will be user's UUID
+  name String
+  nameHistory  String[] @default([]) // Will be appended to whenever a name change is detected
+  searched Int // Number of times a user has been searched for
+  profiles SkyblockProfile[]
+}
+
+model SkyblockProfile {
+    id String @unique // The UUID for the skyblock profile for that user
+    name String
+    player User? @relation(fields: [owner_id], references: [id])
+    owner_id String? // The UUID of the owner of the skyblock profile
+    gamemode ProfileType
+}
