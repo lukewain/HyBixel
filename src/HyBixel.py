@@ -5,6 +5,7 @@ from discord.utils import setup_logging
 from prisma import Prisma
 
 import helpers
+from .HyBixelTree import HyBixelTree
 
 setup_logging()
 
@@ -14,7 +15,25 @@ class HyBixel(commands.Cog):
         self.config = config
         self.prisma = p
 
-        # Checks to be run when needed
+        intents: discord.Intents = discord.Intents().default()
+        intents.members = True
+
+        self.prefix = commands.when_mentioned_or(config.prefix)
+
+        allowed_mentions = discord.AllowedMentions(
+            everyone=False, users=True, roles=False
+        )
+
+        super().__init__(
+            command_prefix=self.prefix,
+            intents=intents,
+            allowed_mentions=allowed_mentions,
+            tree_cls=HyBixelTree,
+        )
+
+        self.token = config.token
+
+        self.error_webhook = config.error_webhook
 
     async def __aenter__(self): ...
 

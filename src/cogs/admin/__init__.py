@@ -1,7 +1,9 @@
 from src.HyBixel import HyBixel
 
+from .GuildAdmin import GuildAdmin
 
-class Admin:
+
+class Admin(GuildAdmin):
     """Admin cog for the bot"""
 
 
