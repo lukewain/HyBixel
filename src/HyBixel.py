@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord.utils import setup_logging
 
-import asyncpg
+from prisma import Prisma
 
 import helpers
 
@@ -10,9 +10,9 @@ setup_logging()
 
 
 class HyBixel(commands.Cog):
-    def __init__(self, *, config: helpers.Config, pool: asyncpg.Pool[asyncpg.Record]):
+    def __init__(self, *, config: helpers.Config, p: Prisma):
         self.config = config
-        self.pool = pool
+        self.prisma = p
 
         # Checks to be run when needed
 
@@ -23,3 +23,4 @@ class HyBixel(commands.Cog):
     async def generateUsernameCache(self):
         # Generate username cache of top 20 most searched usernames.
         ...
+        self.cachedNames = await self.prisma.user.find_many(20)
