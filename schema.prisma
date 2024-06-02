@@ -12,9 +12,61 @@ generator client {
 
 // Enums
 enum ProfileType {
-    IRONMAN
-    BINGO
-    STANDARD
+  IRONMAN
+  BINGO
+  STANDARD
+}
+
+enum ItemTier {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+  MYTHIC
+  DIVINE
+  SPECIAL
+  VERY_SPECIAL
+}
+
+enum ItemCategory {
+  REFORGE_STONE
+  SWORD
+  BOOTS
+  BELT
+  NECKLACE
+  GLOVES
+  HELMET
+  CHESTPLATE
+  ACCESSORY
+  CLOAK
+  LEGGINGS
+  AXE
+  HOE
+  COSMETIC
+  MEMENTO
+  FISHING_ROD
+  FISHING_WEAPON
+  BAIT
+  BRACELET
+  PET_ITEM
+  WAND
+  PORTAL
+  BOW
+  NONE
+  DUNGEON_PASS
+  ARROW
+  SPADE
+  PICKAXE
+  DEPLOYABLE
+  DRILL
+  SHEARS
+  LONGSWORD
+  GAUNTLET
+  TRAVEL_SCROLL
+  ARROW_POISON
+  CHISEL
+  VACUUM
 }
 
 // data models
@@ -29,17 +81,49 @@ enum ProfileType {
 // }
 
 model User {
-  id    String    @unique  // Will be user's UUID
-  name String
-  nameHistory  String[] @default([]) // Will be appended to whenever a name change is detected
-  searched Int // Number of times a user has been searched for
-  profiles SkyblockProfile[]
+  id              String            @unique // Will be user's UUID
+  name            String
+  nameHistory     String[]          @default([]) // Will be appended to whenever a name change is detected
+  searched        Int // Number of times a user has been searched for
+  profiles        SkyblockProfile[]
+  PlayerInventory PlayerInventory[]
 }
 
 model SkyblockProfile {
-    id String @unique // The UUID for the skyblock profile for that user
-    name String
-    player User? @relation(fields: [owner_id], references: [id])
-    owner_id String? // The UUID of the owner of the skyblock profile
-    gamemode ProfileType
+  id              String            @unique // The UUID for the skyblock profile for that user
+  name            String
+  player          User?             @relation(fields: [owner_id], references: [id])
+  owner_id        String? // The UUID of the owner of the skyblock profile
+  gamemode        ProfileType
+  PlayerInventory PlayerInventory[]
+}
+
+model PlayerInventory {
+  id                 String           @unique // Custom string formatted <player_uuid>;<profile_uuid>
+  player             User?            @relation(fields: [player_uuid], references: [id])
+  player_uuid        String
+  profile            SkyblockProfile? @relation(fields: [profile_uuid], references: [id])
+  profile_uuid       String
+  inventory_contents String // b64 string
+}
+
+// Static Tables
+
+model SkyblockItem {
+  id       String        @unique
+  name     String
+  color    String
+  tier     ItemTier
+  category ItemCategory? // Can sometimes be none
+}
+
+// Error Model
+
+model Errors {
+  id             Int     @unique @default(autoincrement())
+  user_initiated Boolean
+  command_author BigInt?
+  command_id     BigInt?
+  command_name   String?
+  error          String
 }

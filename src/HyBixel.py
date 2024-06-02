@@ -5,15 +5,17 @@ from discord.utils import setup_logging
 from prisma import Prisma
 
 import helpers
+from helpers.api import ApiHandler
 from .HyBixelTree import HyBixelTree
 
 setup_logging()
 
 
-class HyBixel(commands.Cog):
-    def __init__(self, *, config: helpers.Config, p: Prisma):
+class HyBixel(commands.Bot):
+    def __init__(self, *, config: helpers.Config, p: Prisma, apihandler: ApiHandler):
         self.config = config
         self.prisma = p
+        self.apihandler = apihandler
 
         intents: discord.Intents = discord.Intents().default()
         intents.members = True
